@@ -3,13 +3,13 @@ import argparse
 from tabulate import tabulate
 from collections import defaultdict
 
+GDP_COLUMN_INDEX = 2
+
 
 def read_economic_single_file(path):
     try:
         with open(path, 'r', encoding='utf-8') as file:
             reader = csv.reader(file)
-            #headers = next(data)
-            #print(headers)
             data = list(reader)
             return data
     except FileNotFoundError:
@@ -32,8 +32,6 @@ def calculate_avg(data, column_index):
     avg = []
 
     for row in data:
-        if dd[row[0]]:
-            dd[row[0]]: []
         dd[row[0]].append(row[column_index])
 
     for k, v in dd.items():
@@ -62,7 +60,7 @@ def setup_parser():
     data = read_economic_multiple_files(args.files)
 
     if args.report == 'average-gdp':
-        result = calculate_avg(data, 2)
+        result = calculate_avg(data, GDP_COLUMN_INDEX)
     else:
         raise ValueError(f"Неизвестный тип отчета: {args.report}")
 
