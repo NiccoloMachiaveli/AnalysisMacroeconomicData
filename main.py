@@ -2,6 +2,7 @@ import csv
 import argparse
 from tabulate import tabulate
 import pytest
+from collections import defaultdict
 
 
 def read_economic_single_file(path):
@@ -30,16 +31,19 @@ def read_economic_multiple_files(paths):
 def calculate_avg(data, column_index):
     total = 0
     amount = 0
+    dd = defaultdict(list)
+    avg = []
 
-    for i in range(len(data[0])):
-        for row in data[0][i]:
-            try:
-                value = float(row[column_index])
-                total += value
-                amount += 1
-            except (ValueError, IndexError):
-                continue
-    return round(total / amount, 2) if amount > 0 else 0
+    for row in data:
+        if dd[row[0]]:
+            dd[row[0]]: []
+        dd[row[0]].append(row[column_index])
+
+    for k, v in dd.items():
+        avg_for_country = round(sum(map(int, v)) / len(v), 2)
+        avg.append([amount, k, avg_for_country])
+
+    return sorted(avg, key=lambda x: x[2], reverse=True)
 
 
 def setup_parser():
@@ -53,9 +57,10 @@ def setup_parser():
 
     args = parser.parse_args()
     data = read_economic_multiple_files(args.files)
+    print(data)
 
     if args.report == 'average-gdp':
-        result = calculate_avg(data, 4)
+        result = calculate_avg(data, 2)
 
         print(result)
 
