@@ -45,7 +45,7 @@ def calculate_avg(data, column_index):
     result = []
 
     for i, item in enumerate(avg_sorted, 1):
-        result.append([i, item[0], item[1]])
+        result.append([i, item[0], f"{item[1]:.2f}"])
     return result
 
 
@@ -60,7 +60,6 @@ def setup_parser():
 
     args = parser.parse_args()
     data = read_economic_multiple_files(args.files)
-    print(data)
 
     if args.report == 'average-gdp':
         result = calculate_avg(data, 2)
@@ -72,7 +71,7 @@ def setup_parser():
 
 table = setup_parser()
 
-print(tabulate(table, headers=['', 'country', 'gdp']))
+print(tabulate(table, headers=['', 'country', 'gdp'], disable_numparse=True, tablefmt="psql"))
 
 '''if __name__ == '__main__':
     setup_parser()'''
