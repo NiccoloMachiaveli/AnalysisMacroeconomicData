@@ -1,7 +1,6 @@
 import csv
 import argparse
 from tabulate import tabulate
-import pytest
 from collections import defaultdict
 
 
@@ -29,8 +28,6 @@ def read_economic_multiple_files(paths):
 
 
 def calculate_avg(data, column_index):
-    total = 0
-    amount = 0
     dd = defaultdict(list)
     avg = []
 
@@ -41,9 +38,15 @@ def calculate_avg(data, column_index):
 
     for k, v in dd.items():
         avg_for_country = round(sum(map(int, v)) / len(v), 2)
-        avg.append([amount, k, avg_for_country])
+        avg.append([k, avg_for_country])
 
-    return sorted(avg, key=lambda x: x[2], reverse=True)
+    avg_sorted = sorted(avg, key=lambda x: x[1], reverse=True)
+
+    result = []
+
+    for i, item in enumerate(avg_sorted, 1):
+        result.append([i, item[0], item[1]])
+    return result
 
 
 def setup_parser():
@@ -61,15 +64,15 @@ def setup_parser():
 
     if args.report == 'average-gdp':
         result = calculate_avg(data, 2)
+    else:
+        raise ValueError(f"Неизвестный тип отчета: {args.report}")
 
-        print(result)
+    return result
 
 
-setup_parser()
+table = setup_parser()
+
+print(tabulate(table, headers=['', 'country', 'gdp']))
 
 '''if __name__ == '__main__':
     setup_parser()'''
-
-'''table = read_economic_files('economic1.csv', 'economic2.csv')
-
-print(tabulate(table, headers="firstrow"))'''
